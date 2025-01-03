@@ -48,10 +48,27 @@ namespace SQLServer起動アプリケーション
             // 管理者実行チェック
             CheckRunAdmin();
             //ServiceControllerオブジェクトの作成
-            mService = new ServiceController(ServiceName, DeviceName);
-            frmSelectBoot.Service = mService;
-            // デリゲートをセットします。
+            if (!CreateService()) { return; }
             SetDelegate();
+        }
+
+        /// <summary>
+        /// サービスを作成します。
+        /// </summary>
+        private bool CreateService()
+        {
+            try
+            {
+                mService = new ServiceController(ServiceName, DeviceName);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("対象のサービスが見つかりません");
+                return false;
+            }
+            
+            frmSelectBoot.Service = mService;
+            return true;
         }
 
         /// <summary>
