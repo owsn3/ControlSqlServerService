@@ -15,7 +15,7 @@ using Timer = System.Timers.Timer;
 
 namespace SQLServer起動アプリケーション
 {
-    public partial class SelectBoot : Form
+    public partial class frmSelectBoot : Form
     {
         /// <summary>
         /// タイマー
@@ -38,16 +38,24 @@ namespace SQLServer起動アプリケーション
         public Action<string> DelControlService { get; set; }
 
         /// <summary>
-        /// 管理者権限かチェックする
+        /// タスクバーから画面表示を押下
         /// </summary>
-        public Action DelCheckAdmin { get; set; }
+        public Action DelNotifyShow { get; set; }
 
+        /// <summary>
+        /// タスクバーから終了を押下
+        /// </summary>
+        public Action<NotifyIcon> DelNotifyExit { get; set; }
 
-        public SelectBoot()
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public frmSelectBoot()
         {
             InitializeComponent();
         }
 
+        #region イベント
         private void btnStart_Click(object sender, EventArgs e) => DelControlService.Invoke("Start");
 
         private void btnStop_Click(object sender, EventArgs e) => DelControlService.Invoke("Stop");
@@ -63,13 +71,10 @@ namespace SQLServer起動アプリケーション
         /// <param name="e"></param>
         private void SelectBoot_Load(object sender, EventArgs e)
         {
-            DelCheckAdmin.Invoke();
-
             // タイマーを初期化
             mServiceMonitorTimer = new Timer(mTime); // 1秒ごとにチェック
             mServiceMonitorTimer.Elapsed += OnServiceMonitorTick;
             mServiceMonitorTimer.Start();
-
             
             // 初期状態を反映
             ChangeButton();
@@ -82,8 +87,9 @@ namespace SQLServer起動アプリケーション
         /// <param name="e"></param>
         private void SelectBoot_FormClosing(object sender, FormClosingEventArgs e)
         {
-            mServiceMonitorTimer?.Stop();
-            mServiceMonitorTimer?.Dispose();
+            // 完全に閉じるのを防ぐ
+            e.Cancel = true; 
+            this.Hide();
         }
 
         /// <summary>
@@ -92,6 +98,28 @@ namespace SQLServer起動アプリケーション
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnServiceMonitorTick(object sender, ElapsedEventArgs e) => ChangeButton();
+
+        /// <summary>
+        /// タスクトレイから画面表示を押下
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void showForm_Click(object sender, EventArgs e) => DelNotifyShow.Invoke();
+
+        /// <summary>
+        /// タスクトレイから終了を押下
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void stopApp_Click(object sender, EventArgs e)
+        {
+            mServiceMonitorTimer?.Stop();
+            mServiceMonitorTimer?.Dispose();
+            // 処理を終了
+            DelNotifyExit.Invoke(nIcon1);
+        }
+
+        #endregion
 
         private void ChangeButton()
         {
@@ -129,5 +157,8 @@ namespace SQLServer起動アプリケーション
                 this.btnContinue.Enabled = false;
             }
         }
+
+       
+
     }
 }

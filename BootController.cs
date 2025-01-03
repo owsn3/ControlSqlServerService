@@ -1,6 +1,6 @@
-﻿using ControlzEx.Standard;
-using System;
+﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Security.Principal;
 using System.ServiceProcess;
 using System.Timers;
@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace SQLServer起動アプリケーション
 {
-    public class BootController
+    public class BootController : ApplicationContext
     {
         /// <summary>
         /// サービス名
@@ -21,19 +21,23 @@ namespace SQLServer起動アプリケーション
         /// </summary>
         private readonly string DeviceName = ".";
 
+        /// <summary>
+        /// 対象のサービス
+        /// </summary>
         private ServiceController mService;
 
         /// <summary>
         /// Form
         /// </summary>
-        private SelectBoot frmSelectBoot;
+        private frmSelectBoot frmSelectBoot;
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public BootController()
         {
-            
-            frmSelectBoot = new SelectBoot();
+            frmSelectBoot = new frmSelectBoot();
             ControlLogic();
-            frmSelectBoot.ShowDialog();
         }
 
         /// <summary>
@@ -41,17 +45,13 @@ namespace SQLServer起動アプリケーション
         /// </summary>
         private void ControlLogic()
         {
+            // 管理者実行チェック
+            CheckRunAdmin();
             //ServiceControllerオブジェクトの作成
             mService = new ServiceController(ServiceName, DeviceName);
             frmSelectBoot.Service = mService;
             // デリゲートをセットします。
             SetDelegate();
-            // サービスの状態を監視し、ボタンの活性状態を切り替えます。
-        }
-
-        private void MoniterTick(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace SQLServer起動アプリケーション
         private void SetDelegate()
         {
             frmSelectBoot.DelControlService = ControlService;
-            frmSelectBoot.DelCheckAdmin = CheckRunAdmin;
+            frmSelectBoot.DelNotifyShow = ShowForm;
+            frmSelectBoot.DelNotifyExit = ExitApplication;
         }
-
 
         #region 管理者実行チェック
         /// <summary>
@@ -94,7 +94,7 @@ namespace SQLServer起動アプリケーション
             try
             {
                 Process.Start(processInfo);
-                frmSelectBoot.Close();
+                Application.Exit();
             }
             catch (Exception ex)
             {
@@ -154,13 +154,40 @@ namespace SQLServer起動アプリケーション
                     default:
                         break;
                 }
-
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
             }
         }
+        #endregion
+
+        #region タスクトレイ
+        /// <summary>
+        /// フォームを表示
+        /// </summary>
+        private void ShowForm()
+        {
+            if (!frmSelectBoot.Visible)
+            {
+                frmSelectBoot.Show();
+            }
+            else
+            {
+                frmSelectBoot.BringToFront();
+            }
+        }
+
+        /// <summary>
+        /// アプリケーションを終了
+        /// </summary>
+        private void ExitApplication(NotifyIcon nIcon)
+        {
+            nIcon.Visible = false;
+            nIcon.Dispose();
+            Application.Exit();
+        }
+
         #endregion
     }
 }

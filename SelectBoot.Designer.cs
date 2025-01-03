@@ -1,6 +1,6 @@
 ﻿namespace SQLServer起動アプリケーション
 {
-    partial class SelectBoot
+    partial class frmSelectBoot
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSelectBoot));
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnContinue = new System.Windows.Forms.Button();
+            this.nIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showForm = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopApp = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnStart
@@ -74,7 +81,36 @@
             this.btnContinue.UseVisualStyleBackColor = true;
             this.btnContinue.Click += new System.EventHandler(this.btnContinue_Click);
             // 
-            // SelectBoot
+            // nIcon1
+            // 
+            this.nIcon1.ContextMenuStrip = this.contextMenuStrip1;
+            this.nIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("nIcon1.Icon")));
+            this.nIcon1.Text = "SqlServer起動アプリ";
+            this.nIcon1.Visible = true;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showForm,
+            this.stopApp});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(123, 48);
+            // 
+            // showForm
+            // 
+            this.showForm.Name = "showForm";
+            this.showForm.Size = new System.Drawing.Size(122, 22);
+            this.showForm.Text = "画面表示";
+            this.showForm.Click += new System.EventHandler(this.showForm_Click);
+            // 
+            // stopApp
+            // 
+            this.stopApp.Name = "stopApp";
+            this.stopApp.Size = new System.Drawing.Size(122, 22);
+            this.stopApp.Text = "終了";
+            this.stopApp.Click += new System.EventHandler(this.stopApp_Click);
+            // 
+            // frmSelectBoot
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(360, 110);
@@ -82,10 +118,11 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnStart);
-            this.Name = "SelectBoot";
-            this.Text = "Form1";
+            this.Name = "frmSelectBoot";
+            this.Text = "SQLServer起動アプリケーション";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelectBoot_FormClosing);
             this.Load += new System.EventHandler(this.SelectBoot_Load);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -96,5 +133,9 @@
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnContinue;
+        private System.Windows.Forms.NotifyIcon nIcon1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem showForm;
+        private System.Windows.Forms.ToolStripMenuItem stopApp;
     }
 }
